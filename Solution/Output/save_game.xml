@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<save_status>
+  <window />
+  <input />
+  <textures />
+  <scenemanager>
+    <actualscene value="true" />
+    <scenegameplay>
+      <player>
+        <position x="0" y="0" />
+      </player>
+    </scenegameplay>
+  </scenemanager>
+  <renderer />
+</save_status>
