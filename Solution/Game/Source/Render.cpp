@@ -122,43 +122,46 @@ void Render::ResetViewPort()
 }
 
 // Blit to screen
-bool Render::DrawTexture(Camera* came, SDL_Texture* texture, int x, int y, const SDL_Rect* section, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY) const
+bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;
-
+	SDL_Rect rect = {0,0,0,0};
 	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
 	{
-		SDL_Rect rect;
-		rect.x = (int)(it->data->GetViewport().x * speed) + x * scale;
-		rect.y = (int)(it->data->GetViewport().y * speed) + y * scale;
+		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().x * speed) + x * scale;
+		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().y * speed) + y * scale;
 
-		if (section != NULL)
+		if (rect.x >= it->data->GetViewport().x && rect.x + rect.w < it->data->GetViewport().x + it->data->GetViewport().w &&
+			rect.y >= it->data->GetViewport().y && rect.y + rect.h <= it->data->GetViewport().y + it->data->GetViewport().h)
 		{
-			rect.w = it->data->GetBounds().w;
-			rect.h = it->data->GetBounds().h;
-		}
-		else
-		{
-			SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
-		}
+			if (section != NULL)
+			{
+				rect.w = section->w;
+				rect.h = section->h;
+			}
+			else
+			{
+				SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
+			}
 
-		rect.w *= scale;
-		rect.h *= scale;
+			rect.w *= scale;
+			rect.h *= scale;
 
-		SDL_Point* p = NULL;
-		SDL_Point pivot;
+			SDL_Point* p = NULL;
+			SDL_Point pivot;
 
-		if (pivotX != INT_MAX && pivotY != INT_MAX)
-		{
-			pivot.x = pivotX;
-			pivot.y = pivotY;
-			p = &pivot;
-		}
+			if (pivotX != INT_MAX && pivotY != INT_MAX)
+			{
+				pivot.x = pivotX;
+				pivot.y = pivotY;
+				p = &pivot;
+			}
 
-		if (SDL_RenderCopyEx(renderer, texture, &it->data->GetBounds(), &rect, angle, p, SDL_FLIP_NONE) != 0)
-		{
-			LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
-			ret = false;
+			if (SDL_RenderCopyEx(renderer, texture, section, &rect, angle, p, SDL_FLIP_NONE) != 0)
+			{
+				LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
+				ret = false;
+			}
 		}
 	}
 
@@ -171,24 +174,28 @@ bool Render::DrawRectangle(Camera* came, const SDL_Rect& rect, Uint8 r, Uint8 g,
 
 	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
 	{
-		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderDrawColor(renderer, r, g, b, a);
-
-		SDL_Rect rec(rect);
-		if (useCamera)
+		if (rect.x > it->data->GetBounds().x && rect.x + rect.w < it->data->GetBounds().w &&
+			rect.y > it->data->GetBounds().y && rect.y + rect.h < it->data->GetBounds().y + it->data->GetBounds().h)
 		{
-			rec.x = (int)(rect.x * scale);
-			rec.y = (int)(rect.y * scale);
-			rec.w *= scale;
-			rec.h *= scale;
-		}
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
-		int result = (filled) ? SDL_RenderFillRect(renderer, &rec) : SDL_RenderDrawRect(renderer, &rec);
+			SDL_Rect rec(rect);
+			if (useCamera)
+			{
+				rec.x = (int)((rect.x + (it->data->GetViewport().x - it->data->GetBounds().x)) * scale);
+				rec.y = (int)((rect.y + (it->data->GetViewport().y - it->data->GetBounds().y)) * scale);
+				rec.w *= scale;
+				rec.h *= scale;
+			}
 
-		if (result != 0)
-		{
-			LOG("Cannot draw quad to screen. SDL_RenderFillRect error: %s", SDL_GetError());
-			ret = false;
+			int result = (filled) ? SDL_RenderFillRect(renderer, &rec) : SDL_RenderDrawRect(renderer, &rec);
+
+			if (result != 0)
+			{
+				LOG("Cannot draw quad to screen. SDL_RenderFillRect error: %s", SDL_GetError());
+				ret = false;
+			}
 		}
 	}
 

@@ -12,9 +12,9 @@ SceneTitle::SceneTitle()
 {
 	bg = nullptr;
 	camera = new Camera({ 0,0,640,360 }, { 0,0,640,360 });
-	cam2 = new Camera({ 1280,0,640,360 }, { 640,0,640,360 });
-	cam3 = new Camera({ 0,360,640,360 }, { 0,360,640,360 });
-	cam4 = new Camera({ 640,360,640,360 }, { 640,360,640,360 });
+	cam2 = new Camera({ 0,0,640,360 }, { 640,0,640,360 });
+	cam3 = new Camera({ 0,0,640,360 }, { 0,360,640,360 });
+	cam4 = new Camera({ 0,0,640,360 }, { 640,360,640,360 });
 
 	showColliders = false;
 }
@@ -89,7 +89,8 @@ bool SceneTitle::Update(Input* input, Audio* audio, float dt)
 
 void SceneTitle::Draw(Render* render)
 {
-	render->DrawTexture(camera, bg, 0, 0, &camera->bounds);
+	SDL_Rect rect = { 0,0, 440, 260 };
+	render->DrawTexture(bg, 0, 0, NULL);
 	//render->DrawTexture(cam2, bg, cam2->viewport.x, cam2->viewport.y, &cam2->bounds);
 	//render->DrawTexture(cam3, bg, cam3->viewport.x, cam3->viewport.y, &cam3->bounds);
 	//render->DrawTexture(cam4, bg, cam4->viewport.x, cam4->viewport.y, &cam4->bounds);
@@ -103,6 +104,10 @@ bool SceneTitle::UnLoad(Textures* tex, Audio* audio, Render* render)
 
 	tex->UnLoad(bg);
 	audio->Reset();
+	render->EraseCamera(camera);
+	render->EraseCamera(cam2);
+	render->EraseCamera(cam3);
+	render->EraseCamera(cam4);
 
 	return ret;
 }

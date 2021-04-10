@@ -38,6 +38,10 @@ private:
 	SDL_Texture* bg;
 	SDL_Rect player2;
 
+	Camera* cam2;
+	Camera* cam3;
+	Camera* cam4;
+
 	App* app;
 	Player* player;
 	Map* map;
