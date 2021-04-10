@@ -131,18 +131,19 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* sec
 		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().x * speed) + x * scale;
 		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().y * speed) + y * scale;
 
-		if (rect.x >= it->data->GetViewport().x && rect.x + rect.w < it->data->GetViewport().x + it->data->GetViewport().w &&
-			rect.y >= it->data->GetViewport().y && rect.y + rect.h <= it->data->GetViewport().y + it->data->GetViewport().h)
+		if (section != NULL)
 		{
-			if (section != NULL)
-			{
-				rect.w = section->w;
-				rect.h = section->h;
-			}
-			else
-			{
-				SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
-			}
+			rect.w = section->w;
+			rect.h = section->h;
+		}
+		else
+		{
+			SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
+		}
+
+		if (rect.x + rect.w > it->data->GetViewport().x && rect.x < it->data->GetViewport().x + it->data->GetViewport().w &&
+			rect.y + rect.h > it->data->GetViewport().y && rect.y < it->data->GetViewport().y + it->data->GetViewport().h)
+		{
 
 			rect.w *= scale;
 			rect.h *= scale;
