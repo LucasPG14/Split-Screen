@@ -17,10 +17,11 @@ SceneGameplay::SceneGameplay(App* a)
 	name.Create("scenegameplay");
 
 	bg = nullptr;
-	camera = new Camera({ 0, 0,641,360 }, { 0,0,640,360 });
-	cam2 = new Camera({ 640,0,640,360 }, { 640,0,640,360 });
-	cam3 = new Camera({ 0,360,640,360 }, { 0,360,640,360 });
-	cam4 = new Camera({ 640,360,640,360 }, { 640,360,640,360 });
+	
+	cam1 = new Camera({ 0, 0, 640, 360 }, { 0, 0, 640, 360 });
+	cam2 = new Camera({ 0, 0, 640, 360 }, { 640, 0, 640, 360 });
+	cam3 = new Camera({ 0, 0, 640, 360 }, { 0, 360, 640, 360 });
+	cam4 = new Camera({ 0, 0, 640, 360 }, { 640, 360, 640, 360 });
 
 	// Instantiating Map, Player and EntityManager
 	map = new Map();
@@ -36,7 +37,7 @@ bool SceneGameplay::Load(Textures* tex, Audio* audio, Render* render)
 	LOG("Loading Scene Gameplay");
 	bool ret = true;
 
-	render->AddCamera(camera);
+	render->AddCamera(cam1);
 	render->AddCamera(cam2);
 	render->AddCamera(cam3);
 	render->AddCamera(cam4);
@@ -81,19 +82,19 @@ bool SceneGameplay::Update(Input* input, Audio* audio, float dt)
 
 	if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		camera->bounds.y += 200 * dt;
+		cam1->bounds.y += 200 * dt;
 	}
 	if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		camera->bounds.y -= 200 * dt;
+		cam1->bounds.y -= 200 * dt;
 	}
 	if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
-		camera->bounds.x += 200 * dt;
+		cam1->bounds.x += 200 * dt;
 	}
 	if (input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
-		camera->bounds.x -= 200 * dt;
+		cam1->bounds.x -= 200 * dt;
 	}
 
 	if (input->GetKey(SDL_SCANCODE_I) == KEY_REPEAT)
@@ -113,6 +114,23 @@ bool SceneGameplay::Update(Input* input, Audio* audio, float dt)
 		cam3->bounds.x += 200 * dt;
 	}
 
+	if (input->GetKey(SDL_SCANCODE_1) == KEY_REPEAT)
+	{
+		cam4->bounds.y -= 200 * dt;
+	}
+	if (input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT)
+	{
+		cam4->bounds.y += 200 * dt;
+	}
+	if (input->GetKey(SDL_SCANCODE_3) == KEY_REPEAT)
+	{
+		cam4->bounds.x -= 200 * dt;
+	}
+	if (input->GetKey(SDL_SCANCODE_4) == KEY_REPEAT)
+	{
+		cam4->bounds.x += 200 * dt;
+	}
+
 	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN) app->SaveGameRequest();
 	if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN) app->LoadGameRequest();
 
@@ -123,9 +141,10 @@ bool SceneGameplay::Update(Input* input, Audio* audio, float dt)
 
 void SceneGameplay::Draw(Render* render)
 {
+	//render->DrawTexture(bg, 0, 0);
 	map->Draw(render, showColliders);
 	//render->DrawTexture(camera, bg, 0, 0);
-	player->Draw(render, showColliders);
+	//player->Draw(render, showColliders);
 	//render->DrawRectangle(player2, 255, 255, 0);
 	//render->DrawCircle(circle->GetX(), circle->GetY() + circle->GetRadius(), circle->GetRadius(), 255, 0, 0);
 }
@@ -140,7 +159,7 @@ bool SceneGameplay::UnLoad(Textures* tex, Audio* audio, Render* render)
 	entities->UnLoad(tex);
 	map->CleanUp();
 	audio->Reset();
-	render->EraseCamera(camera);
+	render->EraseCamera(cam1);
 
 	delete font;
 	delete entities;

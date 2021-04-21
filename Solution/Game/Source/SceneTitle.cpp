@@ -11,8 +11,8 @@
 SceneTitle::SceneTitle()
 {
 	bg = nullptr;
-	camera = new Camera({ 0,0,640,360 }, { 0,0,640,360 });
-	cam2 = new Camera({ 0,0,640,360 }, { 640,0,640,360 });
+	cam1 = new Camera({ 0,0,640,360 }, { 0,0,640,360 });
+	cam2 = new Camera({ 0,0,640,360 }, { 0,0,640,360 });
 	cam3 = new Camera({ 0,0,640,360 }, { 0,360,640,360 });
 	cam4 = new Camera({ 0,0,640,360 }, { 640,360,640,360 });
 
@@ -26,7 +26,7 @@ bool SceneTitle::Load(Textures* tex, Audio* audio, Render* render)
 
 	bg = tex->Load("Assets/Textures/texture.png");
 	audio->PlayMusic("Assets/Audio/Music/music_spy.ogg");
-	render->AddCamera(camera);
+	render->AddCamera(cam1);
 	render->AddCamera(cam2);
 	render->AddCamera(cam3);
 	render->AddCamera(cam4);
@@ -76,12 +76,13 @@ bool SceneTitle::Update(Input* input, Audio* audio, float dt)
 
 	if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		camera->bounds.y += 200 * dt;
+		cam1->bounds.y += 200 * dt;
 	}
 	if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		camera->bounds.y -= 200 * dt;
+		cam1->bounds.y -= 200 * dt;
 	}
+
 	if (input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) TransitionToScene(SceneType::GAMEPLAY);
 
 	return ret;
@@ -90,11 +91,11 @@ bool SceneTitle::Update(Input* input, Audio* audio, float dt)
 void SceneTitle::Draw(Render* render)
 {
 	SDL_Rect rect = { 0,0, 440, 260 };
-	render->DrawTexture(bg, 0, 0, NULL);
+	render->DrawTexture(bg, 0, 0);
 	//render->DrawTexture(cam2, bg, cam2->viewport.x, cam2->viewport.y, &cam2->bounds);
 	//render->DrawTexture(cam3, bg, cam3->viewport.x, cam3->viewport.y, &cam3->bounds);
 	//render->DrawTexture(cam4, bg, cam4->viewport.x, cam4->viewport.y, &cam4->bounds);
-	render->DrawRectangle(camera, player, 255, 0, 0);
+	//render->DrawRectangle(camera, player, 255, 0, 0);
 }
 
 bool SceneTitle::UnLoad(Textures* tex, Audio* audio, Render* render)
@@ -104,7 +105,7 @@ bool SceneTitle::UnLoad(Textures* tex, Audio* audio, Render* render)
 
 	tex->UnLoad(bg);
 	audio->Reset();
-	render->EraseCamera(camera);
+	render->EraseCamera(cam1);
 	render->EraseCamera(cam2);
 	render->EraseCamera(cam3);
 	render->EraseCamera(cam4);

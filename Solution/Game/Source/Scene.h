@@ -57,7 +57,7 @@ public:
 	bool transitionRequired;
 	SceneType nextScene;
 
-	Camera* camera;
+	Camera* cam1;
 
 	bool showColliders;
 };

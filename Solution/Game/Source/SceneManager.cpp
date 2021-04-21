@@ -47,7 +47,7 @@ bool SceneManager::Start()
 
 	audio->Load();
 
-	current = new SceneTitle();
+	current = new SceneGameplay(app);
 	current->Load(tex, audio, render);
 
 	next = nullptr;
@@ -60,14 +60,6 @@ bool SceneManager::Update(float dt)
 {
 	LOG("Updating Current Scene");
 	bool ret = true;
-
-	//if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) current->camera->GetBounds().y += 5 * dt;
-
-	//if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) current->camera.y -= 5 * dt;
-
-	//if (input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) current->camera.x += 5 * dt;
-
-	//if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) current->camera.x -= 5 * dt;
 
 	if (input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN) current->showColliders = !current->showColliders;
 
@@ -117,7 +109,7 @@ bool SceneManager::Update(float dt)
 	// Draw full screen rectangle in front of everything
 	if (onTransition)
 	{
-		render->DrawRectangle(current->camera, { -current->camera->GetBounds().x, -current->camera->GetBounds().y, 1280, 720 }, 0, 0, 0, (unsigned char)(255.0f * transitionAlpha));
+		render->DrawRectangle(current->cam1, { -current->cam1->GetBounds().x, -current->cam1->GetBounds().y, 1280, 720 }, 0, 0, 0, (unsigned char)(255.0f * transitionAlpha));
 	}
 
 	if (current->transitionRequired)
