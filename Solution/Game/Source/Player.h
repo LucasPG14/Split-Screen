@@ -34,7 +34,7 @@ public:
 	iPoint GetSpeed() const { return speed; }
 
 	// Setters
-	inline void SetCamera(Camera* cam) { camera = cam; }
+	void SetCamera(Camera* cam);
 
 private:
 

@@ -117,6 +117,13 @@ void Player::CameraFollow()
 	if (camera->pos.y + camera->viewport.h >= mapLimits.y) camera->pos.y = mapLimits.y - camera->viewport.h;
 }
 
+void Player::SetCamera(Camera* cam)
+{
+	camera = cam;
+	bounds.x = 100 + cam->GetViewport().x;
+	bounds.y = 100 + cam->GetViewport().y;
+}
+
 void Player::HandleInputs(Input* input, float dt)
 {
 	switch (id)

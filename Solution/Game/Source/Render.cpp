@@ -137,7 +137,8 @@ bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Re
 {
 	bool ret = true;
 	SDL_Rect rect = {0,0,0,0};
-	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
+	ListItem<Camera*>* it = cameras.start;
+	for (; it != nullptr; it = it->next)
 	{
 		rect.x = (int)((-it->data->GetBounds().x + it->data->GetViewport().x) * speed) + x * scale;
 		rect.y = (int)((-it->data->GetBounds().y + it->data->GetViewport().y) * speed) + y * scale;

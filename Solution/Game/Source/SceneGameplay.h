@@ -27,8 +27,6 @@ public:
 	bool UnLoad(Textures* tex, Audio* audio, Render* render) override;
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
-	
-	void CameraFollow(float dt);
 
 	bool LoadState(pugi::xml_node&) override;
 
@@ -37,19 +35,10 @@ public:
 private:
 	SDL_Texture* bg;
 
-	Camera* cam2;
-	Camera* cam3;
-	Camera* cam4;
+	List<Player*> players;
 
 	App* app;
-	Player* player1;
-	Player* player2;
-	Player* player3;
-	Player* player4;
 	Map* map;
-	Font* font;
-	EntityManager* entities;
-	PathFinding* path;
 };
 
 #endif //__SCENEGAMEPLAY_H__

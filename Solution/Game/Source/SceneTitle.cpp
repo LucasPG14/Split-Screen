@@ -25,13 +25,13 @@ bool SceneTitle::Load(Textures* tex, Audio* audio, Render* render, DisplayType t
 
 	player = { 50,50, 16, 32 };
 
-	twoHorizontalScreens = new GuiButton(1, { 540, 350, 200, 50 }, "HorizontalScreens");
+	twoHorizontalScreens = new GuiButton(1, { 540, 290, 200, 50 }, "HorizontalScreens");
 	twoHorizontalScreens->SetObserver(this);
 	
-	twoVerticalScreens = new GuiButton(2, { 540, 420, 200, 50 }, "VerticalScreens");
+	twoVerticalScreens = new GuiButton(2, { 540, 360, 200, 50 }, "VerticalScreens");
 	twoVerticalScreens->SetObserver(this);
 
-	fourScreens = new GuiButton(3, { 540, 490, 200, 50 }, "FourScreens");
+	fourScreens = new GuiButton(3, { 540, 430, 200, 50 }, "FourScreens");
 	fourScreens->SetObserver(this);
 
 	return ret;
@@ -53,8 +53,6 @@ bool SceneTitle::Update(Input* input, Audio* audio, float dt)
 	twoHorizontalScreens->Update(input, dt);
 	twoVerticalScreens->Update(input, dt);
 	fourScreens->Update(input, dt);
-
-	//if (input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) TransitionToScene(SceneType::GAMEPLAY);
 
 	return ret;
 }
