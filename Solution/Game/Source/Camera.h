@@ -1,21 +1,22 @@
 #pragma once
 
 #include "SDL/include/SDL.h"
-
-class Window;
+#include "Point.h"
 
 class Camera
 {
 public:
-	Camera(SDL_Rect b, SDL_Rect view);
+	Camera(iPoint b, SDL_Rect view);
 
 	virtual ~Camera();
 
 	SDL_Rect GetViewport();
 
-	SDL_Rect GetBounds();
+	iPoint GetBounds();
 
-	SDL_Rect bounds;
+	iPoint pos;
 	SDL_Rect viewport;
+
+	bool assigned;
 private:
 };

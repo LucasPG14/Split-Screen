@@ -4,6 +4,8 @@ GuiButton::GuiButton(uint32 id, SDL_Rect bounds, const char* text) : GuiControl(
 {
     this->bounds = bounds;
     this->text = text;
+
+    this->state = GuiControlState::NORMAL;
 }
 
 GuiButton::~GuiButton()
@@ -45,15 +47,15 @@ bool GuiButton::Draw(Render* render, bool showColliders)
     // Draw the right button depending on state
     switch (state)
     {
-    case GuiControlState::DISABLED: //render->DrawRectangle(bounds, 100, 100, 100, 255);
+    case GuiControlState::DISABLED: render->DrawRectangle(bounds, 100, 100, 100, 255);
         break;
-    case GuiControlState::NORMAL: //render->DrawRectangle(bounds, 0, 255, 0, 255);
+    case GuiControlState::NORMAL: render->DrawRectangle(bounds, 0, 255, 0, 255);
         break;
-    case GuiControlState::FOCUSED: //render->DrawRectangle(bounds, 255, 255, 0, 255);
+    case GuiControlState::FOCUSED: render->DrawRectangle(bounds, 255, 255, 0, 255);
         break;
-    case GuiControlState::PRESSED: //render->DrawRectangle(bounds, 0, 255, 255, 255);
+    case GuiControlState::PRESSED: render->DrawRectangle(bounds, 0, 255, 255, 255);
         break;
-    case GuiControlState::SELECTED: //render->DrawRectangle(bounds, 0, 255, 0, 255);
+    case GuiControlState::SELECTED: render->DrawRectangle(bounds, 0, 255, 0, 255);
         break;
     default:
         break;

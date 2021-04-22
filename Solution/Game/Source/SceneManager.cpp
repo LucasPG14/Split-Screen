@@ -47,8 +47,8 @@ bool SceneManager::Start()
 
 	audio->Load();
 
-	current = new SceneGameplay(app);
-	current->Load(tex, audio, render);
+	current = new SceneTitle();
+	current->Load(tex, audio, render, DisplayType::NORMAL);
 
 	next = nullptr;
 
@@ -80,7 +80,8 @@ bool SceneManager::Update(float dt)
 				transitionAlpha = 1.0f;
 
 				current->UnLoad(tex, audio, render);	// Unload current screen
-				next->Load(tex, audio, render);	// Load next screen
+				render->ClearCameras();
+				next->Load(tex, audio, render, current->nextDisplay);	// Load next screen
 
 				RELEASE(current);	// Free current pointer
 				current = next;		// Assign next pointer
@@ -109,7 +110,7 @@ bool SceneManager::Update(float dt)
 	// Draw full screen rectangle in front of everything
 	if (onTransition)
 	{
-		render->DrawRectangle(current->cam1, { -current->cam1->GetBounds().x, -current->cam1->GetBounds().y, 1280, 720 }, 0, 0, 0, (unsigned char)(255.0f * transitionAlpha));
+		render->DrawRectangle({ 0, 0, 1280, 720 }, 0, 0, 0, (unsigned char)(255.0f * transitionAlpha));
 	}
 
 	if (current->transitionRequired)

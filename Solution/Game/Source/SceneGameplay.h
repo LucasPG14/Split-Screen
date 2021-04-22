@@ -18,7 +18,7 @@ public:
 
 	virtual ~SceneGameplay() {}
 
-	bool Load(Textures* tex, Audio* audio, Render* render) override;
+	bool Load(Textures* tex, Audio* audio, Render* render, DisplayType type) override;
 
 	bool Update(Input* input, Audio* audio, float dt) override;
 
@@ -36,14 +36,16 @@ public:
 
 private:
 	SDL_Texture* bg;
-	SDL_Rect player2;
 
 	Camera* cam2;
 	Camera* cam3;
 	Camera* cam4;
 
 	App* app;
-	Player* player;
+	Player* player1;
+	Player* player2;
+	Player* player3;
+	Player* player4;
 	Map* map;
 	Font* font;
 	EntityManager* entities;

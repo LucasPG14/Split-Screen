@@ -3,35 +3,36 @@
 #include "Textures.h"
 
 #include "SceneTitle.h"
-#include "GuiControl.h"
 #include "Audio.h"
 
+#include "GuiButton.h"
 #include "Log.h"
 
 SceneTitle::SceneTitle()
 {
 	bg = nullptr;
-	cam1 = new Camera({ 0,0,640,360 }, { 0,0,640,360 });
-	cam2 = new Camera({ 0,0,640,360 }, { 0,0,640,360 });
-	cam3 = new Camera({ 0,0,640,360 }, { 0,360,640,360 });
-	cam4 = new Camera({ 0,0,640,360 }, { 640,360,640,360 });
 
-	showColliders = false;
+	showColliders = true;
 }
 
-bool SceneTitle::Load(Textures* tex, Audio* audio, Render* render)
+bool SceneTitle::Load(Textures* tex, Audio* audio, Render* render, DisplayType type)
 {
 	LOG("Loading Scene Title");
 	bool ret = true;
 
 	bg = tex->Load("Assets/Textures/texture.png");
-	audio->PlayMusic("Assets/Audio/Music/music_spy.ogg");
-	render->AddCamera(cam1);
-	render->AddCamera(cam2);
-	render->AddCamera(cam3);
-	render->AddCamera(cam4);
+	CreateCameras(type, render);
 
 	player = { 50,50, 16, 32 };
+
+	twoHorizontalScreens = new GuiButton(1, { 540, 350, 200, 50 }, "HorizontalScreens");
+	twoHorizontalScreens->SetObserver(this);
+	
+	twoVerticalScreens = new GuiButton(2, { 540, 420, 200, 50 }, "VerticalScreens");
+	twoVerticalScreens->SetObserver(this);
+
+	fourScreens = new GuiButton(3, { 540, 490, 200, 50 }, "FourScreens");
+	fourScreens->SetObserver(this);
 
 	return ret;
 }
@@ -40,62 +41,32 @@ bool SceneTitle::Update(Input* input, Audio* audio, float dt)
 {
 	bool ret = true;
 
-	if (input->GetKey(SDL_SCANCODE_I) == KEY_REPEAT)
-	{
-		player.y -= 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_K) == KEY_REPEAT)
-	{
-		player.y += 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
-	{
-		player.x -= 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_L) == KEY_REPEAT)
-	{
-		player.x += 200 * dt;
-	}
-
-	if (input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-	{
-		cam2->bounds.y -= 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-	{
-		cam2->bounds.y += 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-	{
-		cam2->bounds.x -= 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-	{
-		cam2->bounds.x += 200 * dt;
-	}
-
 	if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		cam1->bounds.y += 200 * dt;
+		cam1->pos.y += 200 * dt;
 	}
 	if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		cam1->bounds.y -= 200 * dt;
+		cam1->pos.y -= 200 * dt;
 	}
 
-	if (input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) TransitionToScene(SceneType::GAMEPLAY);
+	twoHorizontalScreens->Update(input, dt);
+	twoVerticalScreens->Update(input, dt);
+	fourScreens->Update(input, dt);
+
+	//if (input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) TransitionToScene(SceneType::GAMEPLAY);
 
 	return ret;
 }
 
 void SceneTitle::Draw(Render* render)
 {
-	SDL_Rect rect = { 0,0, 440, 260 };
-	render->DrawTexture(bg, 0, 0);
-	//render->DrawTexture(cam2, bg, cam2->viewport.x, cam2->viewport.y, &cam2->bounds);
-	//render->DrawTexture(cam3, bg, cam3->viewport.x, cam3->viewport.y, &cam3->bounds);
-	//render->DrawTexture(cam4, bg, cam4->viewport.x, cam4->viewport.y, &cam4->bounds);
-	//render->DrawRectangle(camera, player, 255, 0, 0);
+	SDL_Rect rect = { 0,0, 1280, 720 };
+	render->DrawRectangle(rect, 255, 255, 255, 150);
+
+	twoHorizontalScreens->Draw(render, showColliders);
+	twoVerticalScreens->Draw(render, showColliders);
+	fourScreens->Draw(render, showColliders);
 }
 
 bool SceneTitle::UnLoad(Textures* tex, Audio* audio, Render* render)
@@ -105,10 +76,6 @@ bool SceneTitle::UnLoad(Textures* tex, Audio* audio, Render* render)
 
 	tex->UnLoad(bg);
 	audio->Reset();
-	render->EraseCamera(cam1);
-	render->EraseCamera(cam2);
-	render->EraseCamera(cam3);
-	render->EraseCamera(cam4);
 
 	return ret;
 }
@@ -117,7 +84,11 @@ bool SceneTitle::OnGuiMouseClickEvent(GuiControl* control)
 {
 	switch (control->type)
 	{
-	case GuiControlType::BUTTON: break;
+	case GuiControlType::BUTTON: 
+		if (control->id == 1) TransitionToScene(SceneType::GAMEPLAY, DisplayType::TWO_HORIZONTAL);
+		if (control->id == 2) TransitionToScene(SceneType::GAMEPLAY, DisplayType::TWO_VERTICAL);
+		if (control->id == 3) TransitionToScene(SceneType::GAMEPLAY, DisplayType::FOUR_SCREENS);
+		break;
 	case GuiControlType::CHECKBOX: break;
 	case GuiControlType::SLIDER: break;
 	}

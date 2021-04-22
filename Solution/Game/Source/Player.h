@@ -5,12 +5,12 @@
 #include "Entity.h"
 
 class Input;
-class Physics;
+class Camera;
 
 class Player : public Entity
 {
 public:
-	Player(EntityType type, iPoint pos);
+	Player(int i, EntityType type, iPoint pos, iPoint limits);
 
 	virtual ~Player() {}
 
@@ -26,12 +26,15 @@ public:
 
 	bool SaveState(pugi::xml_node&) const override;
 
+	void CameraFollow();
+
 	// Getters
 	SDL_Rect GetBounds() const { return bounds; }
 
 	iPoint GetSpeed() const { return speed; }
 
-	void SetCamera(int w, int h);
+	// Setters
+	inline void SetCamera(Camera* cam) { camera = cam; }
 
 private:
 
@@ -41,12 +44,14 @@ private:
 
 	// Variables
 	SDL_Texture* texture;
+	Camera* camera;
 
 	iPoint speed;
 
 	bool godMode;
+	int id;
 
-	SDL_Rect camera;
+	iPoint mapLimits;
 };
 
 #endif //__PLAYER_H__

@@ -4,6 +4,8 @@
 #include "Defs.h"
 #include "Log.h"
 
+#include "SDL/include/SDL_opengl.h" 
+
 #define VSYNC true
 
 Render::Render(Window* window) : Module()
@@ -75,6 +77,8 @@ bool Render::PostUpdate()
 bool Render::CleanUp()
 {
 	LOG("Destroying SDL render");
+
+	cameras.Clear();
 	SDL_DestroyRenderer(renderer);
 
 	return true;
@@ -85,20 +89,27 @@ void Render::SetBackgroundColor(SDL_Color color)
 	background = color;
 }
 
-void Render::AddCamera(Camera* camera)
+void Render::AddCamera(iPoint bounds, SDL_Rect viewport)
 {
+	Camera* camera = new Camera(bounds, viewport);
+	
 	cameras.Add(camera);
 }
 
-void Render::EraseCamera(Camera* camera)
+void Render::ClearCameras()
+{
+	if (cameras.Count() > 0) cameras.Clear();
+}
+
+Camera* Render::GetCamera()
 {
 	ListItem<Camera*>* item = cameras.start;
-	for (; item != cameras.end; ++item)
+	for (; item != nullptr; item = item->next)
 	{
-		if (item->data == camera)
+		if (item->data->assigned == false)
 		{
-			cameras.Del(item);
-			break;
+			item->data->assigned = true;
+			return item->data;
 		}
 	}
 }
@@ -106,7 +117,7 @@ void Render::EraseCamera(Camera* camera)
 void Render::SetViewPort(const SDL_Rect& rect)
 {
 	ListItem<Camera*>* item = cameras.start;
-	for (; item != cameras.end; ++item)
+	for (; item != cameras.end; item = item->next)
 	{
 		SDL_RenderSetViewport(renderer, &item->data->GetViewport());
 	}
@@ -115,7 +126,7 @@ void Render::SetViewPort(const SDL_Rect& rect)
 void Render::ResetViewPort()
 {
 	ListItem<Camera*>* item = cameras.start;
-	for (; item != cameras.end; ++item)
+	for (; item != cameras.end; item = item->next)
 	{
 		SDL_RenderSetViewport(renderer, &item->data->GetViewport());
 	}
@@ -128,8 +139,8 @@ bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Re
 	SDL_Rect rect = {0,0,0,0};
 	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
 	{
-		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().x * speed) + x * scale;
-		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().y * speed) + y * scale;
+		rect.x = (int)((-it->data->GetBounds().x + it->data->GetViewport().x) * speed) + x * scale;
+		rect.y = (int)((-it->data->GetBounds().y + it->data->GetViewport().y) * speed) + y * scale;
 		SDL_Rect cam = it->data->GetViewport();
 		if (section != NULL)
 		{
@@ -140,19 +151,19 @@ bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Re
 		{
 			SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
 		}
-
-		if (rect.x + rect.w >= cam.x && rect.x <= cam.x + cam.w &&
-			rect.y + rect.h >= cam.y && rect.y <= cam.y + cam.h)
-		{
-			if (rect.x < cam.x) 
-				rect.x = cam.x;
-			if (rect.y < cam.y) 
-				rect.y = cam.y;
-			if (rect.x + rect.w > cam.x + cam.w) 
-				rect.w = (cam.x + cam.w) - rect.x;
-			if (rect.y + rect.h > cam.y + cam.h) 
-				rect.h = (cam.y + cam.h) - rect.y;
 			
+		if (rect.x + rect.w > cam.x && rect.x < cam.x + cam.w &&
+			rect.y + rect.h > cam.y && rect.y < cam.y + cam.h)
+		{
+			if (rect.x < cam.x)
+				rect.x = cam.x;
+			if (rect.y < cam.y)
+				rect.y = cam.y;
+			if (rect.x + rect.w > cam.x + cam.w)
+				rect.w = (cam.x + cam.w) - rect.x;
+			if (rect.y + rect.h > cam.y + cam.h)
+				rect.h = (cam.y + cam.h) - rect.y;
+
 			rect.w *= scale;
 			rect.h *= scale;
 
@@ -182,13 +193,13 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, SDL_Rect cam, float
 	SDL_Rect rect = { 0,0,0,0 };
 	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
 	{
-		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().w * speed) + x * scale;
-		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().h * speed) + y * scale;
+		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().x * speed) + x * scale;
+		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().y * speed) + y * scale;
 
 		SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
 
-		rect.w += it->data->GetViewport().w;
-		rect.h += it->data->GetViewport().h;
+		rect.w -= it->data->GetViewport().w;
+		rect.h -= it->data->GetViewport().h;
 		
 		rect.w *= scale;
 		rect.h *= scale;
@@ -203,7 +214,7 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, SDL_Rect cam, float
 			p = &pivot;
 		}
 
-		if (SDL_RenderCopyEx(renderer, texture, &it->data->GetBounds(), &rect, angle, p, SDL_FLIP_NONE) != 0)
+		if (SDL_RenderCopyEx(renderer, texture, &rect, &it->data->GetViewport(), angle, p, SDL_FLIP_NONE) != 0)
 		{
 			LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
 			ret = false;
@@ -213,26 +224,35 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, SDL_Rect cam, float
 	return ret;
 }
 
-bool Render::DrawRectangle(Camera* came, const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect cam, bool filled, bool useCamera) const
+bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect cam, bool filled, bool useCamera) const
 {
 	bool ret = true;
 
 	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
 	{
-		if (rect.x > it->data->GetBounds().x && rect.x + rect.w < it->data->GetBounds().x + it->data->GetBounds().w &&
-			rect.y > it->data->GetBounds().y && rect.y + rect.h < it->data->GetBounds().y + it->data->GetBounds().h)
+		SDL_Rect cam = it->data->GetViewport();
+		SDL_Rect rec(rect);
+		if (useCamera)
 		{
+			rec.x = (int)((rect.x + (it->data->GetViewport().x - it->data->GetBounds().x)) * scale);
+			rec.y = (int)((rect.y + (it->data->GetViewport().y - it->data->GetBounds().y)) * scale);
+			rec.w *= scale;
+			rec.h *= scale;
+		}
+		if (rec.x + rec.w > cam.x && rec.x < cam.x + cam.w &&
+			rec.y + rec.h > cam.y && rec.y < cam.y + cam.h)
+		{
+			if (rec.x < cam.x)
+				rec.x = cam.x;
+			if (rec.y < cam.y)
+				rec.y = cam.y;
+			if (rec.x + rec.w > cam.x + cam.w)
+				rec.w = (cam.x + cam.w) - rec.x;
+			if (rec.y + rec.h > cam.y + cam.h)
+				rec.h = (cam.y + cam.h) - rec.y;
+
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_SetRenderDrawColor(renderer, r, g, b, a);
-
-			SDL_Rect rec(rect);
-			if (useCamera)
-			{
-				rec.x = (int)((rect.x + (it->data->GetViewport().x - it->data->GetBounds().x)) * scale);
-				rec.y = (int)((rect.y + (it->data->GetViewport().y - it->data->GetBounds().y)) * scale);
-				rec.w *= scale;
-				rec.h *= scale;
-			}
 
 			int result = (filled) ? SDL_RenderFillRect(renderer, &rec) : SDL_RenderDrawRect(renderer, &rec);
 

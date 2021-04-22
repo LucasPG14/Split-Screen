@@ -3,10 +3,11 @@
 
 #include "Camera.h"
 
-Camera::Camera(SDL_Rect b, SDL_Rect view)
+Camera::Camera(iPoint b, SDL_Rect view)
 {
-    bounds = b;
+    pos = b;
     viewport = view;
+    assigned = false;
 }
 
 Camera::~Camera()
@@ -18,7 +19,7 @@ SDL_Rect Camera::GetViewport()
     return viewport;
 }
 
-SDL_Rect Camera::GetBounds()
+iPoint Camera::GetBounds()
 {
-    return bounds;
+    return pos;
 }
