@@ -61,18 +61,18 @@ public:
 			render->AddCamera({ 0, 0 }, { 0, 0, 1280, 720 });
 			break;
 		case DisplayType::TWO_HORIZONTAL:
-			render->AddCamera({ 0, 0 }, { 0, 0, 1280, 360 });
-			render->AddCamera({ 0, 0 }, { 0, 360, 1280, 360 });
+			render->AddCamera({ 0, 0 }, { 2, 2, 1276, 357 });
+			render->AddCamera({ 0, 0 }, { 2, 361, 1276, 357 });
 			break;
 		case DisplayType::TWO_VERTICAL:
-			render->AddCamera({ 0, 0 }, { 0, 0, 640, 720 });
-			render->AddCamera({ 0, 0 }, { 640, 0, 640, 720 });
+			render->AddCamera({ 0, 0 }, { 2, 2, 637, 716 });
+			render->AddCamera({ 0, 0 }, { 641, 2, 637, 716 });
 			break;
 		case DisplayType::FOUR_SCREENS:
-			render->AddCamera({ 0, 0 }, { 0, 0, 640, 360 });
-			render->AddCamera({ 0, 0 }, { 640, 0, 640, 360 });
-			render->AddCamera({ 0, 0 }, { 0, 360, 640, 360 });
-			render->AddCamera({ 0, 0 }, { 640, 360, 640, 360 });
+			render->AddCamera({ 0, 0 }, { 2, 2, 637, 357 });
+			render->AddCamera({ 0, 0 }, { 641, 2, 637, 357 });
+			render->AddCamera({ 0, 0 }, { 2, 361, 637, 357 });
+			render->AddCamera({ 0, 0 }, { 641, 361, 637, 357 });
 			break;
 		}
 	}
@@ -90,8 +90,6 @@ public:
 	bool transitionRequired;
 	SceneType nextScene;
 	DisplayType nextDisplay;
-
-	Camera* cam1;
 
 	bool showColliders;
 };

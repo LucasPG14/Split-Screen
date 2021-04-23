@@ -33,8 +33,6 @@ public:
 	bool SaveState(pugi::xml_node&) const override;
 
 private:
-	SDL_Texture* bg;
-
 	List<Player*> players;
 
 	App* app;

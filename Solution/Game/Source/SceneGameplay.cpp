@@ -17,7 +17,6 @@ SceneGameplay::SceneGameplay(App* a)
 	name.Create("scenegameplay");
 
 	this->app = a;
-	bg = nullptr;
 
 	// Instantiating Map, Player and EntityManager
 	map = new Map();
@@ -46,9 +45,6 @@ bool SceneGameplay::Load(Textures* tex, Audio* audio, Render* render, DisplayTyp
 		players.Add(player);
 	}
 
-	// Loading assets
-	bg = tex->Load("Assets/Textures/texture.png");
-
 	return ret;
 }
 
@@ -66,6 +62,7 @@ bool SceneGameplay::Update(Input* input, Audio* audio, float dt)
 
 	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN) app->SaveGameRequest();
 	if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN) app->LoadGameRequest();
+
 	if (input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) TransitionToScene(SceneType::TITLE, DisplayType::NORMAL);
 
 	return ret;
@@ -89,7 +86,6 @@ bool SceneGameplay::UnLoad(Textures* tex, Audio* audio, Render* render)
 	LOG("Unloading Scene Gameplay");
 	bool ret = true;
 
-	tex->UnLoad(bg);
 	map->CleanUp();
 	
 	ListItem<Player*>* it = players.start;

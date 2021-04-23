@@ -24,12 +24,6 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 private:
-	SDL_Texture* bg;
-	Camera* cam2;
-	Camera* cam3;
-	Camera* cam4;
-	SDL_Rect player;
-
 	GuiButton* twoHorizontalScreens;
 	GuiButton* twoVerticalScreens;
 	GuiButton* fourScreens;

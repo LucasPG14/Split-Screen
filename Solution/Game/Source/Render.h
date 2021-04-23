@@ -51,7 +51,6 @@ public:
 	Camera* GetCamera();
 
 public:
-	SDL_Rect camera;
 	SDL_Renderer* renderer;
 	SDL_Color background;
 	uint scale;

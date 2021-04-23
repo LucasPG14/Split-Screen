@@ -10,8 +10,6 @@
 
 SceneTitle::SceneTitle()
 {
-	bg = nullptr;
-
 	showColliders = true;
 }
 
@@ -20,10 +18,7 @@ bool SceneTitle::Load(Textures* tex, Audio* audio, Render* render, DisplayType t
 	LOG("Loading Scene Title");
 	bool ret = true;
 
-	bg = tex->Load("Assets/Textures/texture.png");
 	CreateCameras(type, render);
-
-	player = { 50,50, 16, 32 };
 
 	twoHorizontalScreens = new GuiButton(1, { 540, 290, 200, 50 }, "HorizontalScreens");
 	twoHorizontalScreens->SetObserver(this);
@@ -40,15 +35,6 @@ bool SceneTitle::Load(Textures* tex, Audio* audio, Render* render, DisplayType t
 bool SceneTitle::Update(Input* input, Audio* audio, float dt)
 {
 	bool ret = true;
-
-	if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	{
-		cam1->pos.y += 200 * dt;
-	}
-	if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-	{
-		cam1->pos.y -= 200 * dt;
-	}
 
 	twoHorizontalScreens->Update(input, dt);
 	twoVerticalScreens->Update(input, dt);
@@ -71,9 +57,6 @@ bool SceneTitle::UnLoad(Textures* tex, Audio* audio, Render* render)
 {
 	LOG("Unloading Scene Title");
 	bool ret = true;
-
-	tex->UnLoad(bg);
-	audio->Reset();
 
 	return ret;
 }
