@@ -37,8 +37,7 @@ public:
 	void ResetViewPort();
 
 	// Drawing
-	bool DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section = NULL, SDL_Rect cam = { 0,0,0,0 }, float speed = 1.0f, double angle = 0, int pivotX = INT_MAX, int pivotY = INT_MAX) const;
-	bool DrawTexture(SDL_Texture* texture, int x, int y, SDL_Rect cam = { 0,0,0,0 }, float speed = 1.0f, double angle = 0, int pivotX = INT_MAX, int pivotY = INT_MAX);
+	bool DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section = NULL, SDL_Rect cam = { 0,0,0,0 }, float speed = 1.0f, double angle = 0, int pivotX = INT_MAX, int pivotY = INT_MAX) const;
 	bool DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, SDL_Rect cam = {0,0,0,0}, bool filled = true, bool useCamera = true) const;
 	bool DrawLine(Camera* camera, int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;
 	bool DrawCircle(Camera* camera, int x1, int y1, int redius, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;

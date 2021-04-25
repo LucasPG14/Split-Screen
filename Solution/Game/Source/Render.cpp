@@ -47,7 +47,7 @@ bool Render::Awake(pugi::xml_node& config)
 bool Render::Start()
 {
 	LOG("render start");
-	// back background
+	
 	ListItem<Camera*>* item = cameras.start;
 	for (; item != nullptr; item = item->next)
 	{
@@ -98,7 +98,7 @@ void Render::AddCamera(iPoint bounds, SDL_Rect viewport)
 
 void Render::ClearCameras()
 {
-	if (cameras.Count() > 0) cameras.Clear();
+	cameras.Clear();
 }
 
 Camera* Render::GetCamera()
@@ -133,15 +133,15 @@ void Render::ResetViewPort()
 }
 
 // Blit to screen
-bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY) const
+bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;
 	SDL_Rect rect = {0,0,0,0};
 	ListItem<Camera*>* it = cameras.start;
 	for (; it != nullptr; it = it->next)
 	{
-		rect.x = (int)((-it->data->GetBounds().x + it->data->GetViewport().x) * speed) + x * scale;
-		rect.y = (int)((-it->data->GetBounds().y + it->data->GetViewport().y) * speed) + y * scale;
+		rect.x = (int)((-it->data->GetPos().x + it->data->GetViewport().x) * speed) + x * scale;
+		rect.y = (int)((-it->data->GetPos().y + it->data->GetViewport().y) * speed) + y * scale;
 		SDL_Rect cam = it->data->GetViewport();
 		if (section != NULL)
 		{
@@ -188,43 +188,6 @@ bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Re
 	return ret;
 }
 
-bool Render::DrawTexture(SDL_Texture* texture, int x, int y, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY)
-{
-	bool ret = true;
-	SDL_Rect rect = { 0,0,0,0 };
-	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
-	{
-		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().x * speed) + x * scale;
-		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().y * speed) + y * scale;
-
-		SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
-
-		rect.w -= it->data->GetViewport().w;
-		rect.h -= it->data->GetViewport().h;
-		
-		rect.w *= scale;
-		rect.h *= scale;
-
-		SDL_Point* p = NULL;
-		SDL_Point pivot;
-
-		if (pivotX != INT_MAX && pivotY != INT_MAX)
-		{
-			pivot.x = pivotX;
-			pivot.y = pivotY;
-			p = &pivot;
-		}
-
-		if (SDL_RenderCopyEx(renderer, texture, &rect, &it->data->GetViewport(), angle, p, SDL_FLIP_NONE) != 0)
-		{
-			LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
-			ret = false;
-		}
-	}
-
-	return ret;
-}
-
 bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect cam, bool filled, bool useCamera) const
 {
 	bool ret = true;
@@ -235,8 +198,8 @@ bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint
 		SDL_Rect rec(rect);
 		if (useCamera)
 		{
-			rec.x = (int)((rect.x + (it->data->GetViewport().x - it->data->GetBounds().x)) * scale);
-			rec.y = (int)((rect.y + (it->data->GetViewport().y - it->data->GetBounds().y)) * scale);
+			rec.x = (int)((rect.x + (it->data->GetViewport().x - it->data->GetPos().x)) * scale);
+			rec.y = (int)((rect.y + (it->data->GetViewport().y - it->data->GetPos().y)) * scale);
 			rec.w *= scale;
 			rec.h *= scale;
 		}
@@ -278,7 +241,7 @@ bool Render::DrawLine(Camera* camera, int x1, int y1, int x2, int y2, Uint8 r, U
 	int result = -1;
 
 	if(use_camera)
-		result = SDL_RenderDrawLine(renderer, camera->GetBounds().x + x1 * scale, camera->GetBounds().y + y1 * scale, camera->GetBounds().x + x2 * scale, camera->GetBounds().y + y2 * scale);
+		result = SDL_RenderDrawLine(renderer, camera->GetPos().x + x1 * scale, camera->GetPos().y + y1 * scale, camera->GetPos().x + x2 * scale, camera->GetPos().y + y2 * scale);
 	else
 		result = SDL_RenderDrawLine(renderer, x1 * scale, y1 * scale, x2 * scale, y2 * scale);
 

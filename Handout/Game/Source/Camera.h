@@ -6,13 +6,13 @@
 class Camera
 {
 public:
-	Camera(iPoint b, SDL_Rect view);
+	Camera(iPoint b, SDL_Rect view) : pos(b), viewport(view), assigned(false) {}
 
-	virtual ~Camera();
+	virtual ~Camera() {}
 
-	SDL_Rect GetViewport();
+	inline SDL_Rect GetViewport() { return viewport; }
 
-	iPoint GetBounds();
+	inline iPoint GetPos() { return pos; }
 
 	iPoint pos;
 	SDL_Rect viewport;

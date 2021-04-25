@@ -59,9 +59,6 @@
     <ClCompile Include="Source\GuiSlider.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Camera.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Defs.h">

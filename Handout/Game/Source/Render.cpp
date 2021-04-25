@@ -47,7 +47,7 @@ bool Render::Awake(pugi::xml_node& config)
 bool Render::Start()
 {
 	LOG("render start");
-	// back background
+
 	ListItem<Camera*>* item = cameras.start;
 	for (; item != nullptr; item = item->next)
 	{
@@ -125,16 +125,18 @@ void Render::ResetViewPort()
 }
 
 // Blit to screen
-bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY) const
+bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;
 	SDL_Rect rect = {0,0,0,0};
 	ListItem<Camera*>* it = cameras.start;
 	for (; it != nullptr; it = it->next)
 	{
-		// TODO 5: Calculate the position of the texture, with the x and y that you receive in the function
-		// and the x and y of the camera, and also you will have to use the position of the viewport
-		
+		// TODO 5: Here you have the x and y that you receive in the function. You also have to use
+		// the camera position and the viewport and also the speed.
+		rect.x = (int)(x * scale);
+		rect.y = (int)(y * scale);
+
 		if (section != NULL)
 		{
 			rect.w = section->w;
@@ -169,43 +171,6 @@ bool Render::DrawSectionTexture(SDL_Texture* texture, int x, int y, const SDL_Re
 	return ret;
 }
 
-bool Render::DrawTexture(SDL_Texture* texture, int x, int y, SDL_Rect cam, float speed, double angle, int pivotX, int pivotY)
-{
-	bool ret = true;
-	SDL_Rect rect = { 0,0,0,0 };
-	for (ListItem<Camera*>* it = cameras.start; it != nullptr; it = it->next)
-	{
-		rect.x = (int)(-it->data->GetBounds().x + it->data->GetViewport().x * speed) + x * scale;
-		rect.y = (int)(-it->data->GetBounds().y + it->data->GetViewport().y * speed) + y * scale;
-
-		SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
-
-		rect.w -= it->data->GetViewport().w;
-		rect.h -= it->data->GetViewport().h;
-		
-		rect.w *= scale;
-		rect.h *= scale;
-
-		SDL_Point* p = NULL;
-		SDL_Point pivot;
-
-		if (pivotX != INT_MAX && pivotY != INT_MAX)
-		{
-			pivot.x = pivotX;
-			pivot.y = pivotY;
-			p = &pivot;
-		}
-
-		if (SDL_RenderCopyEx(renderer, texture, &rect, &it->data->GetViewport(), angle, p, SDL_FLIP_NONE) != 0)
-		{
-			LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
-			ret = false;
-		}
-	}
-
-	return ret;
-}
-
 bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect cam, bool filled, bool useCamera) const
 {
 	bool ret = true;
@@ -216,13 +181,16 @@ bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint
 		SDL_Rect rec(rect);
 		if (useCamera)
 		{
-			// TODO 5: Calculate the position of the texture, with the x and y that you receive in the function
-			// and the x and y of the camera, and also you will have to use the position of the viewport
+			// TODO 5: Here you have the x and y from the rect that you receive in the function. You also have to use
+			// the camera position and the viewport and also the speed.
+			rec.x = (int)(rect.x * scale);
+			rec.y = (int)(rect.y * scale);
 			rec.w *= scale;
 			rec.h *= scale;
 		}
 
 		// TODO 6: Check if the rect is inside of the viewport or not. If not, you don't want to draw it
+		
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
