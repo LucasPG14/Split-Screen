@@ -1,11 +1,16 @@
-# Split-Screen
+# Split Screen
 
+## Description
+
+I'm Lucas Pérez, a second year student of the degree Videogame Design and Development in the UPC, and I'm doing a research about how to implement a split screen using SDL.
+ 
 ## Controls
 
--Arrows keys to move the first camera.
+ - W, A, S, D to move the first player.
+ - UP, DOWN, LEFT and RIGHT arrows to move the second player.
+ - I, J, K, L to move the third player.
+ - 1, 2, 3, 4 to move the fourth player.
 
--WASD keys to move the second camera.
+## License
 
--IJKL keys to move the third camera.
-
--1234 keys to move the fourth camera.
+This project is licensed under an unmodified MIT license, which is an OSI-certified license that allows static linking with closed source software. Check [LICENSE](LICENSE) for further details.
