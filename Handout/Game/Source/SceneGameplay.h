@@ -6,10 +6,6 @@
 class App;
 class Player;
 class Map;
-class Font;
-class Physics;
-class EntityManager;
-class PathFinding;
 
 class SceneGameplay : public Scene
 {
