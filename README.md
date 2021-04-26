@@ -10,6 +10,7 @@ I'm Lucas Pérez, a second year student of the degree Videogame Design and Devel
  - UP, DOWN, LEFT and RIGHT arrows to move the second player.
  - I, J, K, L to move the third player.
  - 1, 2, 3, 4 to move the fourth player.
+ - Press ENTER to return to the menu.
 
 ## License
 

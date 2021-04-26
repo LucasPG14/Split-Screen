@@ -19,8 +19,8 @@
 				<div class="inner">
 					<span class="icon solid major fa-cloud"></span>
 					<h1><strong>Split Screen</strong></h1>
-					<p>I'm Lucas Pérez, and I'm going to explain you about the split<br />
-					screen, when you need to use it and how to implement it.</p>
+					<p>I'm Lucas Pérez, and I'm going to explain you how a split<br />
+					screen work, when you need to use it and how to implement it.</p>
 					<ul class="actions special">
 						<li><a href="#one" class="button scrolly">Let's GO</a></li>
 					</ul>
@@ -58,7 +58,7 @@
 								<h2><strong>When to use split screen?</strong></h2>
 							</header>
 							<p>You need to use the split screen when you have two players and these two players maybe are in different actions. The most common example is a race game. Maybe the first player goes 5th in the race, but the second player goes 17th. If this happens, you need to have a camera for each player because if not, one of the players couldn't play properly.</p>
-							<p>Then, we can find videogames where there are two players but there is only one camera. A clear example, is the videogame FIFA, where even if there are 4 players, it hasn't a split screen. Why? Because the action of this videogame is around the ball, so the camera will always follow the ball. And there is only one ball, so you don't need more than one camera.</p>
+							<p>Then, we can find videogames where there are two players but there is only one camera. A clear example, is the videogame FIFA, where even if there are 4 players, it hasn't a split screen. Why? Because the action of this videogame is around the ball, so the camera will always follow the ball.</p>
 						</div>
 					</div>
 				</div>
@@ -86,8 +86,14 @@
 						<div class="col-6 col-12">
 							<p>It's very useful when you need more than one step, if you need to draw some shaders, post-processing effects, this method will save you a lot of time. In the case of a split screen, this method gives us a great perfomance because we can create framebuffer objects, draw in them, and then use the texture to draw it in the position we want. It's a little bit expensive at the beginning, but finally is much better than other option.</p>
 						</div>
+						<div class="col-6 col-12">
+							<h3>Camera transitions</h3>
+							<p>The camera transitions are very important in videogames. In the case of the split screen, is important to make sure that the cameras are moving smooth. In some games, we find a split screen where if the two players are nearly at the same position, the two cameras join to create only one.</p>
+							<span class="image fit"><img src="images/camera_transitions_2.png" alt="" /></span>
+							<p>When the two players are separated, it appears a little transition creating a black margin between the cameras. This effect on the camera, maybe seems like a something that it isn't very important, but is a great effect to your split screen.</p>
+							<span class="image fit"><img src="images/camera_transitions_1.png" alt="" /></span>
+						</div>
 					</div>
-				</div>
 			</section>
 
 			<section id="four" class="main style2">
